@@ -6,6 +6,7 @@ import {
   UserButton,
 } from "@clerk/nextjs";
 import { type AppType } from "next/app";
+import Layout from "~/components/layout/Layout";
 import "~/styles/globals.css";
 import { api } from "~/utils/api";
 
@@ -13,8 +14,9 @@ const MyApp: AppType = ({ Component, pageProps }) => {
   return (
     <ClerkProvider>
       <SignedIn>
-        <UserButton />
-        <Component {...pageProps} />
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
       </SignedIn>
       <SignedOut>
         <SignIn />
