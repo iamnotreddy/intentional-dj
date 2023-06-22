@@ -1,5 +1,5 @@
 import { type SpotifyTrack } from "~/lib/types";
-import { PlusIcon } from "./icons";
+import { AddIcon } from "./icons";
 import Image from "next/image";
 
 type SearchResultProps = {
@@ -20,7 +20,7 @@ export const SearchResult = ({
         <p className="font-bold">{track.artists[0]?.name}</p>
       </div>
       <button onClick={() => handleAddSeedTrack(track)}>
-        <PlusIcon />
+        <AddIcon />
       </button>
     </div>
   );

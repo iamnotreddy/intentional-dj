@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { MagnifyingGlass } from "./icons";
+import { SearchIcon } from "./icons";
 import { SearchResult } from "./SearchResult";
 import { type ChangeEvent, useState } from "react";
 import {
@@ -38,7 +38,8 @@ export const SearchWindow = ({ handleAddSeedTrack }: SearchWindowProps) => {
   };
 
   return (
-    <div>
+    <div className="border-4 border-blue-300">
+      <p className="pb-2 text-center font-serif text-xl">Pick a song</p>
       <div className="flex flex-row items-center justify-center space-x-2">
         <input
           type="text"
@@ -48,11 +49,11 @@ export const SearchWindow = ({ handleAddSeedTrack }: SearchWindowProps) => {
           onChange={handleInputChange}
         />
         <button onClick={handleOnClick}>
-          <MagnifyingGlass />
+          <SearchIcon />
         </button>
       </div>
 
-      <div className="flex max-h-screen flex-col space-y-1 overflow-y-auto border-4 border-red-400">
+      <div className="flex max-h-screen flex-col space-y-1 overflow-y-auto">
         {data &&
           data.data &&
           data.data.items.map((track) => {
