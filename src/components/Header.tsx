@@ -1,10 +1,10 @@
-import { UserButton, useUser } from "@clerk/nextjs";
+import { SignOutButton, UserButton, useUser } from "@clerk/nextjs";
 
 export const Header = () => {
   const user = useUser();
 
   return (
-    <header className="sticky top-0 z-50 rounded-lg bg-transparent">
+    <header className="sticky top-0 z-50 rounded-lg border-b-2 border-slate-300 bg-transparent p-2">
       <div className="border- mx-8 flex h-14 items-center justify-between">
         <div className="rounded-xl border-white bg-pink-500 bg-opacity-80 p-2 font-sans text-3xl text-white hover:text-blue-200">
           IntentionalDJ

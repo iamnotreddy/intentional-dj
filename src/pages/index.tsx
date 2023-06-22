@@ -6,7 +6,7 @@ const Home: NextPage = () => {
   const user = useUser();
 
   return (
-    <div className="flex items-center justify-center p-4">
+    <div>
       {user.isSignedIn && <SignIn />}
       {!!user.isSignedIn && <MainPage />}
     </div>

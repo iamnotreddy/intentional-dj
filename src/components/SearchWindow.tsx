@@ -38,7 +38,7 @@ export const SearchWindow = ({ handleAddSeedTrack }: SearchWindowProps) => {
   };
 
   return (
-    <div className="border-4 border-blue-300">
+    <div className="flex flex-col overflow-y-auto rounded-2xl border-2 border-black bg-gray-200 bg-opacity-70 p-4">
       <p className="pb-2 text-center font-serif text-xl">Pick a song</p>
       <div className="flex flex-row items-center justify-center space-x-2">
         <input
