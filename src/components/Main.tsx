@@ -8,6 +8,7 @@ import {
 } from "~/pages/api/search";
 import Image from "next/image";
 import { MagnifyingGlass, PlusIcon } from "./icons";
+import { SearchResult } from "./SearchResult";
 
 export const MainPage = () => {
   const [searchInputValue, setSearchInputValue] = useState("");
@@ -58,19 +59,12 @@ export const MainPage = () => {
           data.data.items.map((item) => {
             const imageURL = item.album.images[1]?.url ?? "";
             return (
-              <div
-                className="flex flex-row items-center space-x-4 border-2 border-dashed border-pink-400"
+              <SearchResult
                 key={item.uri}
-              >
-                <Image src={imageURL} alt="albumImage" height={75} width={75} />
-                <div className="flex flex-col space-y-1">
-                  <p className="text-xl">{item.name}</p>
-                  <p className="font-bold">{item.artists[0]?.name}</p>
-                </div>
-                <button>
-                  <PlusIcon />
-                </button>
-              </div>
+                imageUrl={imageURL}
+                itemName={item.name}
+                itemArtists={item.artists}
+              />
             );
           })}
       </div>
