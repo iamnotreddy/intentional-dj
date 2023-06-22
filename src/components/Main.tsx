@@ -1,24 +1,39 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-
 import { useState } from "react";
 import { SearchWindow } from "./SearchWindow";
 import { type SpotifyTrack } from "~/lib/types";
 import { SeedQueue } from "./SeedQueue";
 import { Header } from "./Header";
 import { SpotifyPlayer } from "./Player";
+import { NavBar } from "./NavBar";
 
 export const MainPage = () => {
   const [seedTracks, setSeedTracks] = useState<SpotifyTrack[]>();
-  const [showSearchWindow, setShowSearchWindow] = useState(true);
+
+  const [navState, setNavState] = useState({
+    showSearchWindow: true,
+    showSeedQueue: false,
+    showRecsQueue: false,
+    showLikesQueue: false,
+  });
+
+  const handleNavStateChange = (target: string) => {
+    setNavState((prevState) => ({
+      ...prevState,
+      showSearchWindow: target === "showSearchWindow",
+      showSeedQueue: target === "showSeedQueue",
+      showRecsQueue: target === "showRecsQueue",
+      showLikesQueue: target === "showLikesQueue",
+    }));
+  };
 
   const handleAddSeedTrack = (track: SpotifyTrack) => {
     setSeedTracks((prev) => {
       if (prev) {
-        return [...prev, track];
+        // don't allow more then 5 seeds
+        return prev.length < 5 ? [...prev, track] : prev;
       }
       return [track];
     });
-    setShowSearchWindow(false);
   };
 
   const handleRemoveSeedTrack = (track: SpotifyTrack) => {
@@ -38,20 +53,20 @@ export const MainPage = () => {
 
       <div
         style={{ width: "100%", height: "80vh" }}
-        className="absolute top-20 flex flex-col items-center justify-center space-y-4 "
+        className="absolute top-24 flex flex-col items-center justify-start space-y-4 "
       >
-        <p className="text-center font-serif text-4xl">
-          What [mood] are you in?
-        </p>
-        {(!seedTracks || showSearchWindow) && (
+        <div className="sticky top-0">
+          <NavBar handleNavStateChange={handleNavStateChange} />
+        </div>
+
+        {navState.showSearchWindow && (
           <SearchWindow handleAddSeedTrack={handleAddSeedTrack} />
         )}
 
-        {seedTracks && (
+        {seedTracks && navState.showSeedQueue && (
           <SeedQueue
             seedTracks={seedTracks}
             handleRemoveSeedTrack={handleRemoveSeedTrack}
-            setShowSearchWindow={setShowSearchWindow}
           />
         )}
       </div>

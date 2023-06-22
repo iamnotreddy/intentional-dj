@@ -1,18 +1,15 @@
 import { type SpotifyTrack } from "~/lib/types";
 import Image from "next/image";
 import { RemoveIcon, SearchIcon } from "./icons";
-import { type Dispatch, type SetStateAction } from "react";
 
 type SeedQueueProps = {
   seedTracks: SpotifyTrack[];
   handleRemoveSeedTrack: (track: SpotifyTrack) => void;
-  setShowSearchWindow: Dispatch<SetStateAction<boolean>>;
 };
 
 export const SeedQueue = ({
   seedTracks,
   handleRemoveSeedTrack,
-  setShowSearchWindow,
 }: SeedQueueProps) => {
   return (
     <div className="flex flex-col space-y-2">
@@ -29,7 +26,7 @@ export const SeedQueue = ({
       {seedTracks.length < 5 && (
         <div className="flex flex-row items-center space-x-4 border-2 border-dashed border-pink-400 p-4">
           <p>Add Another Track...</p>
-          <button onClick={() => setShowSearchWindow(true)}>
+          <button>
             <SearchIcon />
           </button>
         </div>
