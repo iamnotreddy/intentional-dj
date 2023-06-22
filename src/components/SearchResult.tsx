@@ -1,30 +1,25 @@
-import { type SpotifyArtist } from "~/pages/api/search";
+import { type SpotifyTrack } from "~/lib/types";
 import { PlusIcon } from "./icons";
 import Image from "next/image";
 
 type SearchResultProps = {
-  imageUrl: string;
-  trackUri: string;
-  trackName: string;
-  trackArtists: SpotifyArtist[];
-  handleAddSeedTrack: (trackUri: string) => void;
+  track: SpotifyTrack;
+  handleAddSeedTrack: (track: SpotifyTrack) => void;
 };
 
 export const SearchResult = ({
-  imageUrl,
-  trackUri,
-  trackName,
-  trackArtists,
+  track,
   handleAddSeedTrack,
 }: SearchResultProps) => {
+  const imageUrl = track.album.images[1]?.url ?? "";
   return (
     <div className="flex flex-row items-center space-x-4 border-2 border-dashed border-pink-400">
       <Image src={imageUrl} alt="albumImage" height={75} width={75} />
       <div className="flex flex-col space-y-1">
-        <p className="text-xl">{trackName}</p>
-        <p className="font-bold">{trackArtists[0]?.name}</p>
+        <p className="text-xl">{track.name}</p>
+        <p className="font-bold">{track.artists[0]?.name}</p>
       </div>
-      <button onClick={() => handleAddSeedTrack(trackUri)}>
+      <button onClick={() => handleAddSeedTrack(track)}>
         <PlusIcon />
       </button>
     </div>

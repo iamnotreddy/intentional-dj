@@ -1,14 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
-import {
-  type ApiResponse,
-  type SpotifySearchResponse,
-} from "~/pages/api/search";
 import { MagnifyingGlass } from "./icons";
 import { SearchResult } from "./SearchResult";
-import { ChangeEvent, useState } from "react";
+import { type ChangeEvent, useState } from "react";
+import {
+  type SpotifyTrack,
+  type ApiResponse,
+  type SpotifySearchResponse,
+} from "~/lib/types";
 
 type SearchWindowProps = {
-  handleAddSeedTrack: (trackUri: string) => void;
+  handleAddSeedTrack: (track: SpotifyTrack) => void;
 };
 
 export const SearchWindow = ({ handleAddSeedTrack }: SearchWindowProps) => {
@@ -55,14 +56,10 @@ export const SearchWindow = ({ handleAddSeedTrack }: SearchWindowProps) => {
         {data &&
           data.data &&
           data.data.items.map((track) => {
-            const imageURL = track.album.images[1]?.url ?? "";
             return (
               <SearchResult
                 key={track.uri}
-                imageUrl={imageURL}
-                trackUri={track.uri}
-                trackName={track.name}
-                trackArtists={track.artists}
+                track={track}
                 handleAddSeedTrack={handleAddSeedTrack}
               />
             );
