@@ -34,10 +34,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       data: tracks,
     });
   } else {
-    const { error } = await response.json();
     return res.status(response.status).json({
       status: "Error",
-      message: "errrorrrr",
+      message: response.status,
     });
   }
 };

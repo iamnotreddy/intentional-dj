@@ -13,11 +13,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   const endpointURL = "https://api.spotify.com/v1/recommendations";
 
-  const tracks = Array.isArray(req.query.tracks)
-    ? req.query.tracks
-    : [req.query.tracks];
+  const tracks = req.query.tracks;
 
-  const trackUris = tracks.join(",");
+  // isolate track uri id
+  const trackUris =
+    typeof tracks === "string" ? tracks.replaceAll("spotify:track:", "") : "";
 
   const finalURL = `${endpointURL}?limit=5&seed_tracks=${trackUris}`;
 
@@ -30,15 +30,15 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (response.ok) {
     const { tracks } = await response.json();
+
     return res.status(200).json({
       status: "OK",
       data: tracks,
     });
   } else {
-    // const { error } = await response.json();
     return res.status(response.status).json({
       status: "Error",
-      message: "errrorrrr",
+      message: response.status,
     });
   }
 };
