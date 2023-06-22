@@ -18,10 +18,7 @@ export const SearchWindow = ({ handleAddSeedTrack }: SearchWindowProps) => {
   const [searchValue, setSearchValue] = useState("");
   const { data } = useQuery<ApiResponse<SpotifySearchResponse>>(
     ["searchQuery", searchValue],
-    () =>
-      fetch(`/api/search?query=${searchValue}`)
-        .then((res) => res.json())
-        .then(),
+    () => fetch(`/api/search?query=${searchValue}`).then((res) => res.json()),
     {
       keepPreviousData: true,
       enabled: searchValue.length > 0,

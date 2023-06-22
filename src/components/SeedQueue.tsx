@@ -5,12 +5,19 @@ import { RemoveIcon, SearchIcon } from "./icons";
 type SeedQueueProps = {
   seedTracks: SpotifyTrack[];
   handleRemoveSeedTrack: (track: SpotifyTrack) => void;
+  handleSetRequestSeeds: (requestSeeds: SpotifyTrack[]) => void;
 };
 
 export const SeedQueue = ({
   seedTracks,
   handleRemoveSeedTrack,
+  handleSetRequestSeeds,
 }: SeedQueueProps) => {
+  const strings = seedTracks
+    .map((seed) => seed.uri)
+    .join(",")
+    .replaceAll("spotify:track:", "");
+
   return (
     <div className="flex flex-col space-y-2">
       <h1 className="text-center text-xl">Seed Queue</h1>
@@ -31,6 +38,12 @@ export const SeedQueue = ({
           </button>
         </div>
       )}
+      <button
+        className="border-2 border-black p-4 hover:bg-green-300"
+        onClick={() => handleSetRequestSeeds(seedTracks)}
+      >
+        Generate Recs
+      </button>
     </div>
   );
 };
