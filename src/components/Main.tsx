@@ -7,7 +7,7 @@ import {
   type SpotifySearchResponse,
 } from "~/pages/api/search";
 import Image from "next/image";
-import { MagnifyingGlass } from "./icons/MagnifyingGlass";
+import { MagnifyingGlass, PlusIcon } from "./icons";
 
 export const MainPage = () => {
   const [searchInputValue, setSearchInputValue] = useState("");
@@ -67,6 +67,9 @@ export const MainPage = () => {
                   <p className="text-xl">{item.name}</p>
                   <p className="font-bold">{item.artists[0]?.name}</p>
                 </div>
+                <button>
+                  <PlusIcon />
+                </button>
               </div>
             );
           })}
