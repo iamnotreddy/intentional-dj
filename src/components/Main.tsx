@@ -2,16 +2,16 @@
 import { useState } from "react";
 import { SearchWindow } from "./SearchWindow";
 import { type ApiResponse, type SpotifyTrack } from "~/lib/types";
-import { SeedQueue } from "./SeedQueue";
+import { SeedTracks } from "./SeedTracks";
 import { Header } from "./Header";
 import { SpotifyPlayer } from "./Player";
 import { NavBar } from "./NavBar";
 import { useQuery } from "@tanstack/react-query";
-import { RecTracks } from "./RecTracks";
+import { RecsQueue } from "./RecsQueue";
+import { extractIdsFromUriArray } from "~/lib/helpers";
 
 export const MainPage = () => {
   const [seedTracks, setSeedTracks] = useState<SpotifyTrack[]>();
-  const [requestSeeds, setRequestSeeds] = useState("");
 
   const [navState, setNavState] = useState({
     showSearchWindow: true,
@@ -20,19 +20,23 @@ export const MainPage = () => {
     showLikesQueue: false,
   });
 
-  const seedTrackUris = seedTracks?.map((seed) => seed.uri).join(",");
-
-  const { data: recTracks } = useQuery<ApiResponse<SpotifyTrack[]>>(
-    [requestSeeds],
-    () =>
-      fetch(`/api/recs?tracks=${seedTrackUris ?? ""}`).then((res) =>
-        res.json()
-      ),
+  const { data: recommendations, refetch: fetchRecs } = useQuery<
+    ApiResponse<SpotifyTrack[]>
+  >(
+    ["recs"],
+    () => {
+      const seedUris = extractIdsFromUriArray(seedTracks ?? []);
+      return fetch(`/api/recs?tracks=${seedUris}`).then((res) => res.json());
+    },
     {
-      keepPreviousData: true,
-      enabled: requestSeeds.length > 0,
+      enabled: false,
     }
   );
+
+  const getRecsFromSeeds = async () => {
+    const trackRecs = await fetchRecs();
+    return trackRecs;
+  };
 
   const handleNavStateChange = (target: string) => {
     setNavState((prevState) => ({
@@ -63,15 +67,6 @@ export const MainPage = () => {
     });
   };
 
-  const handleSetRequestSeeds = (tracks: SpotifyTrack[]) => {
-    const strings = tracks
-      .map((seed) => seed.uri)
-      .join(",")
-      .replaceAll("spotify:track:", "");
-
-    setRequestSeeds(strings);
-  };
-
   return (
     <div className="relative flex max-h-screen w-full">
       <div className="absolute left-0 top-0 z-20 w-full">
@@ -91,15 +86,15 @@ export const MainPage = () => {
         )}
 
         {seedTracks && navState.showSeedQueue && (
-          <SeedQueue
+          <SeedTracks
             seedTracks={seedTracks}
             handleRemoveSeedTrack={handleRemoveSeedTrack}
-            handleSetRequestSeeds={handleSetRequestSeeds}
+            getRecsFromSeeds={getRecsFromSeeds}
           />
         )}
 
-        {recTracks && recTracks.data && navState.showRecsQueue && (
-          <RecTracks recTracks={recTracks.data} />
+        {recommendations && recommendations.data && navState.showRecsQueue && (
+          <RecsQueue recTracks={recommendations.data} />
         )}
       </div>
       <SpotifyPlayer />

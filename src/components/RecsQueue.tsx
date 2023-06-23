@@ -2,16 +2,16 @@ import { type SpotifyTrack } from "~/lib/types";
 import Image from "next/image";
 import { SearchIcon } from "./icons";
 
-type RecTracksProps = {
+type RecsQueueProps = {
   recTracks: SpotifyTrack[];
 };
 
-export const RecTracks = ({ recTracks }: RecTracksProps) => {
+export const RecsQueue = ({ recTracks }: RecsQueueProps) => {
   return (
     <div className="flex flex-col space-y-2">
       <h1 className="text-center text-xl">Reccomendations</h1>
       {recTracks.map((track) => {
-        return <RecTrackRow key={track.uri} track={track} />;
+        return <RecsQueueRow key={track.uri} track={track} />;
       })}
       {recTracks.length < 5 && (
         <div className="flex flex-row items-center space-x-4 border-2 border-dashed border-pink-400 p-4">
@@ -25,7 +25,7 @@ export const RecTracks = ({ recTracks }: RecTracksProps) => {
   );
 };
 
-const RecTrackRow = (props: { track: SpotifyTrack }) => {
+const RecsQueueRow = (props: { track: SpotifyTrack }) => {
   const { track } = props;
   const imageUrl = track.album.images[2]?.url ?? "";
   return (
