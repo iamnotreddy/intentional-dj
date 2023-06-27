@@ -1,12 +1,31 @@
 import { type SpotifyTrack } from "~/lib/types";
 import Image from "next/image";
 import { SearchIcon } from "./icons";
+import { useEffect } from "react";
 
 type RecsQueueProps = {
   recTracks: SpotifyTrack[];
 };
 
 export const RecsQueue = ({ recTracks }: RecsQueueProps) => {
+  useEffect(() => {
+    const playTracks = async () => {
+      const trackUris = recTracks.map((track) => track.uri).join(",");
+      console.log(trackUris);
+
+      const requestURL = `/api/playback/play?tracks=${trackUris}`;
+      const response = await fetch(requestURL);
+
+      console.log(response);
+
+      if (!response.ok) {
+        console.log(response);
+      }
+    };
+
+    void playTracks();
+  }, [recTracks]);
+
   return (
     <div className="flex flex-col space-y-2">
       <h1 className="text-center text-xl">Reccomendations</h1>

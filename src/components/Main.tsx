@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import { useState } from "react";
 import { SearchWindow } from "./SearchWindow";
@@ -18,6 +21,10 @@ export const MainPage = () => {
     showSeedQueue: false,
     showRecsQueue: false,
     showLikesQueue: false,
+  });
+
+  const { data: tokenData } = useQuery<ApiResponse<string>>(["token"], () => {
+    return fetch(`/api/auth/token`).then((res) => res.json());
   });
 
   const { data: recommendations, refetch: fetchRecs } = useQuery<
@@ -97,7 +104,7 @@ export const MainPage = () => {
           <RecsQueue recTracks={recommendations.data} />
         )}
       </div>
-      <SpotifyPlayer />
+      {tokenData?.data && <SpotifyPlayer accessToken={tokenData?.data} />}
     </div>
   );
 };
