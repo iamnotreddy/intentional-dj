@@ -1,19 +1,20 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-misused-promises */
-import { useState } from "react";
-import { SearchWindow } from "./SearchWindow";
-import { type ApiResponse, type SpotifyTrack } from "~/lib/types";
-import { SeedTracks } from "./SeedTracks";
-import { Header } from "./Header";
-import { SpotifyPlayer } from "./Player";
-import { NavBar } from "./NavBar";
 import { useQuery } from "@tanstack/react-query";
-import { RecsQueue } from "./RecsQueue";
+import { type GetServerSideProps, type NextPage } from "next";
+import { useState } from "react";
+import { Header } from "~/components/Header";
+import { NavBar } from "~/components/NavBar";
+import { SpotifyPlayer } from "~/components/Player";
+import { RecsQueue } from "~/components/RecsQueue";
+import { SearchWindow } from "~/components/SearchWindow";
+import { SeedTracks } from "~/components/SeedTracks";
 import { extractIdsFromUriArray } from "~/lib/helpers";
+import { type SpotifyTrack, type ApiResponse } from "~/lib/types";
+import { getAuth } from "@clerk/nextjs/server";
+import { getSpotifyToken } from "~/lib/getSpotifyToken";
 
-export const MainPage = () => {
+export const MainPage: NextPage<{ accessToken: string }> = ({
+  accessToken,
+}) => {
   const [seedTracks, setSeedTracks] = useState<SpotifyTrack[]>();
 
   const [navState, setNavState] = useState({
@@ -23,17 +24,15 @@ export const MainPage = () => {
     showLikesQueue: false,
   });
 
-  const { data: tokenData } = useQuery<ApiResponse<string>>(["token"], () => {
-    return fetch(`/api/auth/token`).then((res) => res.json());
-  });
-
   const { data: recommendations, refetch: fetchRecs } = useQuery<
     ApiResponse<SpotifyTrack[]>
   >(
     ["recs"],
     () => {
       const seedUris = extractIdsFromUriArray(seedTracks ?? []);
-      return fetch(`/api/recs?tracks=${seedUris}`).then((res) => res.json());
+      return fetch(
+        `/api/recs?tracks=${seedUris}&accessToken=${accessToken}`
+      ).then((res) => res.json());
     },
     {
       enabled: false,
@@ -58,7 +57,7 @@ export const MainPage = () => {
   const handleAddSeedTrack = (track: SpotifyTrack) => {
     setSeedTracks((prev) => {
       if (prev) {
-        // don't allow more then 5 seeds
+        // don't allow more than 5 seeds
         return prev.length < 5 ? [...prev, track] : prev;
       }
       return [track];
@@ -89,7 +88,10 @@ export const MainPage = () => {
         </div>
 
         {navState.showSearchWindow && (
-          <SearchWindow handleAddSeedTrack={handleAddSeedTrack} />
+          <SearchWindow
+            handleAddSeedTrack={handleAddSeedTrack}
+            accessToken={accessToken}
+          />
         )}
 
         {seedTracks && navState.showSeedQueue && (
@@ -100,11 +102,39 @@ export const MainPage = () => {
           />
         )}
 
-        {recommendations && recommendations.data && navState.showRecsQueue && (
-          <RecsQueue recTracks={recommendations.data} />
-        )}
+        {seedTracks &&
+          recommendations &&
+          recommendations.data &&
+          navState.showRecsQueue && (
+            <RecsQueue
+              recTracks={recommendations.data}
+              seedTracks={seedTracks}
+              accessToken={accessToken}
+            />
+          )}
       </div>
-      {tokenData?.data && <SpotifyPlayer accessToken={tokenData?.data} />}
+      {accessToken && <SpotifyPlayer accessToken={accessToken} />}
     </div>
   );
+};
+
+export default MainPage;
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const { userId } = getAuth(ctx.req);
+  const { CLERK_SECRET_KEY = "" } = process.env;
+  const accessToken = await getSpotifyToken(userId ?? "", CLERK_SECRET_KEY);
+
+  if (!userId && accessToken) {
+    return {
+      redirect: {
+        destination: "/sign-in?redirect_url=" + ctx.resolvedUrl,
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: { accessToken: accessToken },
+  };
 };

@@ -30,8 +30,6 @@ export const SpotifyPlayer = (props: { accessToken: string }) => {
 
   useEffect(() => {
     if (scriptReady && !player.current) {
-      console.log("am i running too much??");
-
       if (accessToken) {
         player.current = new Spotify.Player({
           name: "IntentionalDJ",
@@ -43,7 +41,6 @@ export const SpotifyPlayer = (props: { accessToken: string }) => {
 
       player.current?.addListener("ready", ({ device_id }) => {
         setDeviceId(() => {
-          console.log("setting device id as: ", device_id);
           return device_id;
         });
       });
@@ -60,17 +57,22 @@ export const SpotifyPlayer = (props: { accessToken: string }) => {
 
   useEffect(() => {
     const playOnDevice = async () => {
-      const response = await fetch(`api/playback/device?id=${deviceId}`);
+      const response = await fetch(
+        `api/playback/device?id=${deviceId}&accessToken=${accessToken}`,
+        {
+          method: "PUT",
+        }
+      );
+
       if (!response.ok) {
         console.error("invalid device id");
       }
     };
 
     if (deviceId) {
-      // console.log("deviceId", deviceId);
       playOnDevice();
     }
-  }, [deviceId]);
+  }, [accessToken, deviceId]);
 
   return (
     <div className="fixed bottom-0 w-full border-t-2 border-black bg-green-200 p-4">

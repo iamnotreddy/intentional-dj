@@ -10,15 +10,22 @@ import {
 
 type SearchWindowProps = {
   handleAddSeedTrack: (track: SpotifyTrack) => void;
+  accessToken: string;
 };
 
-export const SearchWindow = ({ handleAddSeedTrack }: SearchWindowProps) => {
+export const SearchWindow = ({
+  handleAddSeedTrack,
+  accessToken,
+}: SearchWindowProps) => {
   //   const debouncedQuery = useDebounceValue(searchInputValue, 100);
   const [searchInputValue, setSearchInputValue] = useState("");
   const [searchValue, setSearchValue] = useState("");
   const { data } = useQuery<ApiResponse<SpotifySearchResponse>>(
     ["searchQuery", searchValue],
-    () => fetch(`/api/search?query=${searchValue}`).then((res) => res.json()),
+    () =>
+      fetch(`/api/search?query=${searchValue}&accessToken=${accessToken}`, {
+        method: "GET",
+      }).then((res) => res.json()),
     {
       keepPreviousData: true,
       enabled: searchValue.length > 0,
@@ -33,10 +40,11 @@ export const SearchWindow = ({ handleAddSeedTrack }: SearchWindowProps) => {
   const handleOnClick = () => {
     setSearchValue(searchInputValue);
   };
-
+  console.log(accessToken);
   return (
     <div className="flex flex-col overflow-y-auto rounded-2xl border-2 border-black bg-gray-200 bg-opacity-70 p-4">
       <p className="pb-2 text-center font-serif text-xl">Pick a song</p>
+
       <div className="flex flex-row items-center justify-center space-x-2">
         <input
           type="text"

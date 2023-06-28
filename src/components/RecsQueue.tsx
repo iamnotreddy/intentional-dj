@@ -5,26 +5,33 @@ import { useEffect } from "react";
 
 type RecsQueueProps = {
   recTracks: SpotifyTrack[];
+  seedTracks: SpotifyTrack[];
+  accessToken: string;
 };
 
-export const RecsQueue = ({ recTracks }: RecsQueueProps) => {
+export const RecsQueue = ({
+  recTracks,
+  accessToken,
+  seedTracks,
+}: RecsQueueProps) => {
   useEffect(() => {
     const playTracks = async () => {
-      const trackUris = recTracks.map((track) => track.uri).join(",");
-      console.log(trackUris);
+      const trackUris = [...seedTracks, ...recTracks]
+        .map((track) => track.uri)
+        .join(",");
 
-      const requestURL = `/api/playback/play?tracks=${trackUris}`;
-      const response = await fetch(requestURL);
-
-      console.log(response);
+      const requestURL = `/api/playback/play?tracks=${trackUris}&accessToken=${accessToken}`;
+      const response = await fetch(requestURL, {
+        method: "PUT",
+      });
 
       if (!response.ok) {
-        console.log(response);
+        console.error(response);
       }
     };
 
     void playTracks();
-  }, [recTracks]);
+  }, [accessToken, recTracks]);
 
   return (
     <div className="flex flex-col space-y-2">
