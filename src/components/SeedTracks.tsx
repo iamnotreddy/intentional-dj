@@ -1,13 +1,13 @@
-import { type ApiResponse, type SpotifyTrack } from "~/lib/types";
+import { type ApiResponse } from "~/lib/types";
 import Image from "next/image";
 import { RemoveIcon, SearchIcon } from "./icons";
 import { type QueryObserverResult } from "@tanstack/react-query";
 
 type SeedQueueProps = {
-  seedTracks: SpotifyTrack[];
-  handleRemoveSeedTrack: (track: SpotifyTrack) => void;
+  seedTracks: Spotify.Track[];
+  handleRemoveSeedTrack: (track: Spotify.Track) => void;
   getRecsFromSeeds: () => Promise<
-    QueryObserverResult<ApiResponse<SpotifyTrack[]>, unknown>
+    QueryObserverResult<ApiResponse<Spotify.Track[]>, unknown>
   >;
 };
 
@@ -49,8 +49,8 @@ export const SeedTracks = ({
 };
 
 const SeedTrackRow = (props: {
-  track: SpotifyTrack;
-  handleRemoveSeedTrack: (track: SpotifyTrack) => void;
+  track: Spotify.Track;
+  handleRemoveSeedTrack: (track: Spotify.Track) => void;
 }) => {
   const { track, handleRemoveSeedTrack } = props;
   const imageUrl = track.album.images[2]?.url ?? "";

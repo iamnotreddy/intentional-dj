@@ -8,14 +8,14 @@ import { RecsQueue } from "~/components/RecsQueue";
 import { SearchWindow } from "~/components/SearchWindow";
 import { SeedTracks } from "~/components/SeedTracks";
 import { extractIdsFromUriArray } from "~/lib/helpers";
-import { type SpotifyTrack, type ApiResponse } from "~/lib/types";
+import { type ApiResponse } from "~/lib/types";
 import { getAuth } from "@clerk/nextjs/server";
 import { getSpotifyToken } from "~/lib/getSpotifyToken";
 
 export const MainPage: NextPage<{ accessToken: string }> = ({
   accessToken,
 }) => {
-  const [seedTracks, setSeedTracks] = useState<SpotifyTrack[]>();
+  const [seedTracks, setSeedTracks] = useState<Spotify.Track[]>();
 
   const [navState, setNavState] = useState({
     showSearchWindow: true,
@@ -25,7 +25,7 @@ export const MainPage: NextPage<{ accessToken: string }> = ({
   });
 
   const { data: recommendations, refetch: fetchRecs } = useQuery<
-    ApiResponse<SpotifyTrack[]>
+    ApiResponse<Spotify.Track[]>
   >(
     ["recs"],
     () => {
@@ -54,7 +54,7 @@ export const MainPage: NextPage<{ accessToken: string }> = ({
     }));
   };
 
-  const handleAddSeedTrack = (track: SpotifyTrack) => {
+  const handleAddSeedTrack = (track: Spotify.Track) => {
     setSeedTracks((prev) => {
       if (prev) {
         // don't allow more than 5 seeds
@@ -64,7 +64,7 @@ export const MainPage: NextPage<{ accessToken: string }> = ({
     });
   };
 
-  const handleRemoveSeedTrack = (track: SpotifyTrack) => {
+  const handleRemoveSeedTrack = (track: Spotify.Track) => {
     setSeedTracks((prev) => {
       if (prev) {
         return prev.filter((item) => item !== track);

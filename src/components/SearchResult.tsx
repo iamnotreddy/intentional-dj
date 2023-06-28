@@ -1,10 +1,9 @@
-import { type SpotifyTrack } from "~/lib/types";
 import { AddIcon } from "./icons";
 import Image from "next/image";
 
 type SearchResultProps = {
-  track: SpotifyTrack;
-  handleAddSeedTrack: (track: SpotifyTrack) => void;
+  track: Spotify.Track;
+  handleAddSeedTrack: (track: Spotify.Track) => void;
 };
 
 export const SearchResult = ({

@@ -1,11 +1,10 @@
-import { type SpotifyTrack } from "~/lib/types";
 import Image from "next/image";
 import { SearchIcon } from "./icons";
 import { useEffect } from "react";
 
 type RecsQueueProps = {
-  recTracks: SpotifyTrack[];
-  seedTracks: SpotifyTrack[];
+  recTracks: Spotify.Track[];
+  seedTracks: Spotify.Track[];
   accessToken: string;
 };
 
@@ -31,7 +30,7 @@ export const RecsQueue = ({
     };
 
     void playTracks();
-  }, [accessToken, recTracks]);
+  }, [accessToken, recTracks, seedTracks]);
 
   return (
     <div className="flex flex-col space-y-2">
@@ -51,7 +50,7 @@ export const RecsQueue = ({
   );
 };
 
-const RecsQueueRow = (props: { track: SpotifyTrack }) => {
+const RecsQueueRow = (props: { track: Spotify.Track }) => {
   const { track } = props;
   const imageUrl = track.album.images[2]?.url ?? "";
   return (

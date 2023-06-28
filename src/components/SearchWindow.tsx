@@ -2,14 +2,10 @@ import { useQuery } from "@tanstack/react-query";
 import { SearchIcon } from "./icons";
 import { SearchResult } from "./SearchResult";
 import { type ChangeEvent, useState } from "react";
-import {
-  type SpotifyTrack,
-  type ApiResponse,
-  type SpotifySearchResponse,
-} from "~/lib/types";
+import { type ApiResponse, type SpotifySearchResponse } from "~/lib/types";
 
 type SearchWindowProps = {
-  handleAddSeedTrack: (track: SpotifyTrack) => void;
+  handleAddSeedTrack: (track: Spotify.Track) => void;
   accessToken: string;
 };
 
