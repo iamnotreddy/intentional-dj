@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
+
 import { useQuery } from "@tanstack/react-query";
 import { type GetServerSideProps, type NextPage } from "next";
 import { useState } from "react";
@@ -38,11 +40,6 @@ export const MainPage: NextPage<{ accessToken: string }> = ({
       enabled: false,
     }
   );
-
-  const getRecsFromSeeds = async () => {
-    const trackRecs = await fetchRecs();
-    return trackRecs;
-  };
 
   const handleNavStateChange = (target: string) => {
     setNavState((prevState) => ({
@@ -98,7 +95,7 @@ export const MainPage: NextPage<{ accessToken: string }> = ({
           <SeedTracks
             seedTracks={seedTracks}
             handleRemoveSeedTrack={handleRemoveSeedTrack}
-            getRecsFromSeeds={getRecsFromSeeds}
+            fetchRecs={fetchRecs}
           />
         )}
 

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { type ApiResponse } from "~/lib/types";
 import Image from "next/image";
 import { RemoveIcon, SearchIcon } from "./icons";
@@ -6,7 +8,7 @@ import { type QueryObserverResult } from "@tanstack/react-query";
 type SeedQueueProps = {
   seedTracks: Spotify.Track[];
   handleRemoveSeedTrack: (track: Spotify.Track) => void;
-  getRecsFromSeeds: () => Promise<
+  fetchRecs: () => Promise<
     QueryObserverResult<ApiResponse<Spotify.Track[]>, unknown>
   >;
 };
@@ -14,8 +16,13 @@ type SeedQueueProps = {
 export const SeedTracks = ({
   seedTracks,
   handleRemoveSeedTrack,
-  getRecsFromSeeds,
+
+  fetchRecs,
 }: SeedQueueProps) => {
+  const handleRefetch = async (): Promise<void> => {
+    await fetchRecs();
+  };
+
   return (
     <div className="flex flex-col space-y-2">
       <h1 className="text-center text-xl">Seed Queue</h1>
@@ -38,9 +45,7 @@ export const SeedTracks = ({
       )}
       <button
         className="border-2 border-black p-4 hover:bg-green-300"
-        onClick={() => {
-          void getRecsFromSeeds();
-        }}
+        onClick={() => void handleRefetch}
       >
         Generate Recs
       </button>
