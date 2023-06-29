@@ -3,15 +3,14 @@
 
 import { useState, useEffect, useRef } from "react";
 import loadSpotifyScript from "~/lib/loadSpotifyScript";
-import { NextIcon, PlayIcon } from "./icons";
+import { NextIcon, PlayIcon, PreviousIcon } from "./icons";
 import Image from "next/image";
 import { PauseIcon } from "./icons";
+import { useUser } from "@clerk/clerk-react";
 
 export const SpotifyPlayer = (props: { accessToken: string }) => {
   //   const [player, setPlayer] = useState<Spotify.Player>();
   const player = useRef<Spotify.Player | null>(null);
-
-  const { accessToken } = props;
 
   const [currentTrack, setCurrentTrack] = useState<Spotify.Track>();
   const [deviceId, setDeviceId] = useState<string>();
@@ -19,6 +18,8 @@ export const SpotifyPlayer = (props: { accessToken: string }) => {
   const [playerState, setPlayerState] = useState<
     Spotify.PlaybackState | undefined
   >();
+
+  const { accessToken } = props;
 
   useEffect(() => {
     window.onSpotifyWebPlaybackSDKReady = () => {
@@ -53,16 +54,13 @@ export const SpotifyPlayer = (props: { accessToken: string }) => {
         setCurrentTrack(state.track_window.current_track);
       });
     }
-  }, [accessToken, scriptReady]);
+  }, [scriptReady]);
 
   useEffect(() => {
     const playOnDevice = async () => {
-      const response = await fetch(
-        `api/playback/device?id=${deviceId}&accessToken=${accessToken}`,
-        {
-          method: "PUT",
-        }
-      );
+      const response = await fetch(`api/playback/device?id=${deviceId}`, {
+        method: "PUT",
+      });
 
       if (!response.ok) {
         console.error("invalid device id");
@@ -72,7 +70,7 @@ export const SpotifyPlayer = (props: { accessToken: string }) => {
     if (deviceId) {
       playOnDevice();
     }
-  }, [accessToken, deviceId]);
+  }, [deviceId]);
 
   return (
     <div className="fixed bottom-0 w-full border-t-2 border-black bg-green-200 p-4">
@@ -92,13 +90,20 @@ export const SpotifyPlayer = (props: { accessToken: string }) => {
               : ""}
           </p>
           <div className="flex flex-row space-x-2">
+            <button
+              onClick={() => {
+                player.current ? player.current.nextTrack() : undefined;
+              }}
+            >
+              <PreviousIcon />
+            </button>
             {!playerState?.paused ? (
               <button
                 onClick={() => {
                   player.current ? player.current.togglePlay() : undefined;
                 }}
               >
-                <PlayIcon />
+                <PauseIcon />
               </button>
             ) : (
               <button
@@ -106,7 +111,7 @@ export const SpotifyPlayer = (props: { accessToken: string }) => {
                   player.current ? player.current.togglePlay() : undefined;
                 }}
               >
-                <PauseIcon />
+                <PlayIcon />
               </button>
             )}
 

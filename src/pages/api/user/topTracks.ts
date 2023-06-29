@@ -10,7 +10,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { userId } = getAuth(req);
 
   const { CLERK_SECRET_KEY = "" } = process.env;
-
   const accessToken = await getSpotifyToken(userId ?? "", CLERK_SECRET_KEY);
 
   const topTracksUrl = "https://api.spotify.com/v1/me/top/tracks";

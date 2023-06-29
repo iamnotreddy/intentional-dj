@@ -3,9 +3,14 @@
 /* eslint-disable import/no-anonymous-default-export */
 
 import { type NextApiRequest, type NextApiResponse } from "next";
+import { getAuth } from "@clerk/nextjs/server";
+import { getSpotifyToken } from "~/lib/getSpotifyToken";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-  const { tracks, accessToken } = req.query;
+  const { tracks } = req.query;
+  const { userId } = getAuth(req);
+  const { CLERK_SECRET_KEY = "" } = process.env;
+  const accessToken = await getSpotifyToken(userId ?? "", CLERK_SECRET_KEY);
 
   const trackArray =
     tracks && typeof tracks === "string" ? tracks.split(",") : [];

@@ -6,20 +6,16 @@ import { type ApiResponse, type SpotifySearchResponse } from "~/lib/types";
 
 type SearchWindowProps = {
   handleAddSeedTrack: (track: Spotify.Track) => void;
-  accessToken: string;
 };
 
-export const SearchWindow = ({
-  handleAddSeedTrack,
-  accessToken,
-}: SearchWindowProps) => {
+export const SearchWindow = ({ handleAddSeedTrack }: SearchWindowProps) => {
   //   const debouncedQuery = useDebounceValue(searchInputValue, 100);
   const [searchInputValue, setSearchInputValue] = useState("");
   const [searchValue, setSearchValue] = useState("");
   const { data } = useQuery<ApiResponse<SpotifySearchResponse>>(
     ["searchQuery", searchValue],
     () =>
-      fetch(`/api/search?query=${searchValue}&accessToken=${accessToken}`, {
+      fetch(`/api/search?query=${searchValue}`, {
         method: "GET",
       }).then((res) => res.json()),
     {
@@ -36,12 +32,11 @@ export const SearchWindow = ({
   const handleOnClick = () => {
     setSearchValue(searchInputValue);
   };
-  console.log(accessToken);
-  return (
-    <div className="flex flex-col overflow-y-auto rounded-2xl border-2 border-black bg-gray-200 bg-opacity-70 p-4">
-      <p className="pb-2 text-center font-serif text-xl">Pick a song</p>
 
-      <div className="flex flex-row items-center justify-center space-x-2">
+  return (
+    <div className="m-4 flex flex-col overflow-hidden bg-gray-200">
+      <p className="pb-2 text-center font-serif text-xl">Search for a song</p>
+      <div className="flex flex-row items-center justify-center space-x-2 pb-4">
         <input
           type="text"
           placeholder="...find a"
@@ -54,7 +49,7 @@ export const SearchWindow = ({
         </button>
       </div>
 
-      <div className="flex max-h-screen flex-col space-y-1 overflow-y-auto">
+      <div className="flex max-h-full flex-col space-y-1 overflow-y-auto">
         {data &&
           data.data &&
           data.data.items.map((track) => {

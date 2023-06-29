@@ -5,21 +5,16 @@ import { useEffect } from "react";
 type RecsQueueProps = {
   recTracks: Spotify.Track[];
   seedTracks: Spotify.Track[];
-  accessToken: string;
 };
 
-export const RecsQueue = ({
-  recTracks,
-  accessToken,
-  seedTracks,
-}: RecsQueueProps) => {
+export const RecsQueue = ({ recTracks, seedTracks }: RecsQueueProps) => {
   useEffect(() => {
     const playTracks = async () => {
       const trackUris = [...seedTracks, ...recTracks]
         .map((track) => track.uri)
         .join(",");
 
-      const requestURL = `/api/playback/play?tracks=${trackUris}&accessToken=${accessToken}`;
+      const requestURL = `/api/playback/play?tracks=${trackUris}`;
       const response = await fetch(requestURL, {
         method: "PUT",
       });
@@ -30,7 +25,7 @@ export const RecsQueue = ({
     };
 
     void playTracks();
-  }, [accessToken, recTracks, seedTracks]);
+  }, [recTracks, seedTracks]);
 
   return (
     <div className="flex flex-col space-y-2">
