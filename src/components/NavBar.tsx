@@ -1,4 +1,4 @@
-import { HeartIcon, QueueIcon, SearchIcon, SeedQueueIcon } from "./icons";
+import { DeviceIcon, QueueIcon } from "./icons";
 
 export const NavBar = (props: {
   handleNavStateChange: (target: string) => void;
@@ -9,19 +9,11 @@ export const NavBar = (props: {
   const icons = [
     {
       icon: <QueueIcon />,
-      target: "showRecsQueue",
+      target: "showQueue",
     },
     {
-      icon: <SeedQueueIcon />,
-      target: "showSeedQueue",
-    },
-    {
-      icon: <HeartIcon />,
-      target: "showLikesQueue",
-    },
-    {
-      icon: <SearchIcon />,
-      target: "showSearchWindow",
+      icon: <DeviceIcon />,
+      target: "showDevices",
     },
   ];
 

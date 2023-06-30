@@ -1,26 +1,24 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import { useState } from "react";
 import { SearchWindow } from "./SearchWindow";
-import { type ApiResponse, type SpotifyTrack } from "~/lib/types";
-import { SeedTracks } from "./SeedTracks";
+import { type ApiResponse } from "~/lib/types";
 import { Header } from "./Header";
 import { SpotifyPlayer } from "./Player";
 import { NavBar } from "./NavBar";
 import { useQuery } from "@tanstack/react-query";
-import { RecsQueue } from "./RecsQueue";
 import { extractIdsFromUriArray } from "~/lib/helpers";
+import { Queue } from "./Queue";
 
 export const MainPage = () => {
-  const [seedTracks, setSeedTracks] = useState<SpotifyTrack[]>();
+  const [seedTracks, setSeedTracks] = useState<Spotify.Track[]>();
 
   const [navState, setNavState] = useState({
-    showSearchWindow: true,
-    showSeedQueue: false,
-    showRecsQueue: false,
-    showLikesQueue: false,
+    showSearchWindow: false,
+    showQueue: true,
   });
 
   const { data: tokenData } = useQuery<ApiResponse<string>>(["token"], () => {
@@ -28,7 +26,7 @@ export const MainPage = () => {
   });
 
   const { data: recommendations, refetch: fetchRecs } = useQuery<
-    ApiResponse<SpotifyTrack[]>
+    ApiResponse<Spotify.Track[]>
   >(
     ["recs"],
     () => {
@@ -40,22 +38,23 @@ export const MainPage = () => {
     }
   );
 
-  const getRecsFromSeeds = async () => {
-    const trackRecs = await fetchRecs();
-    return trackRecs;
-  };
-
   const handleNavStateChange = (target: string) => {
-    setNavState((prevState) => ({
-      ...prevState,
-      showSearchWindow: target === "showSearchWindow",
-      showSeedQueue: target === "showSeedQueue",
-      showRecsQueue: target === "showRecsQueue",
-      showLikesQueue: target === "showLikesQueue",
-    }));
+    if (target === "showSearchWindow") {
+      setNavState((prevState) => ({
+        ...prevState,
+        showSearchWindow: !prevState.showSearchWindow,
+      }));
+    }
+
+    if (target === "showQueue") {
+      setNavState((prevState) => ({
+        ...prevState,
+        showQueue: target === "showQueue",
+      }));
+    }
   };
 
-  const handleAddSeedTrack = (track: SpotifyTrack) => {
+  const handleAddSeedTrack = (track: Spotify.Track) => {
     setSeedTracks((prev) => {
       if (prev) {
         // don't allow more then 5 seeds
@@ -65,7 +64,7 @@ export const MainPage = () => {
     });
   };
 
-  const handleRemoveSeedTrack = (track: SpotifyTrack) => {
+  const handleRemoveSeedTrack = (track: Spotify.Track) => {
     setSeedTracks((prev) => {
       if (prev) {
         return prev.filter((item) => item !== track);
@@ -74,37 +73,47 @@ export const MainPage = () => {
     });
   };
 
+  const getContainerStyle = (isSearchRendered: boolean) => {
+    const opacity = isSearchRendered ? "30" : "70";
+    return `flex w-3/5 flex-col overflow-hidden rounded-2xl border-2 border-black bg-gray-200 bg-opacity-${opacity} p-4 backdrop-filter backdrop-blur`;
+  };
+
+  const containerStyle = getContainerStyle(navState.showSearchWindow);
+
   return (
     <div className="relative flex max-h-screen w-full">
       <div className="absolute left-0 top-0 z-20 w-full">
         <Header />
       </div>
 
+      {navState.showSearchWindow && (
+        <div className="fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2 transform border-2 border-purple-300">
+          <SearchWindow
+            handleAddSeedTrack={handleAddSeedTrack}
+            handleNavStateChange={handleNavStateChange}
+          />
+        </div>
+      )}
+
       <div
         style={{ width: "100%", height: "80vh" }}
-        className="absolute top-24 flex flex-col items-center justify-start space-y-4 "
+        className="absolute top-24 flex flex-col items-center justify-start space-y-4"
       >
-        <div className="sticky top-0">
-          <NavBar handleNavStateChange={handleNavStateChange} />
-        </div>
-
-        {navState.showSearchWindow && (
-          <SearchWindow handleAddSeedTrack={handleAddSeedTrack} />
+        {navState.showQueue && (
+          <div className={containerStyle}>
+            <Queue
+              seedTracks={seedTracks}
+              recTracks={recommendations?.data}
+              handleRemoveSeedTrack={handleRemoveSeedTrack}
+              handleNavStateChange={handleNavStateChange}
+              fetchRecs={fetchRecs}
+            />
+          </div>
         )}
 
-        {seedTracks && navState.showSeedQueue && (
-          <SeedTracks
-            seedTracks={seedTracks}
-            handleRemoveSeedTrack={handleRemoveSeedTrack}
-            getRecsFromSeeds={getRecsFromSeeds}
-          />
-        )}
-
-        {recommendations && recommendations.data && navState.showRecsQueue && (
-          <RecsQueue recTracks={recommendations.data} />
-        )}
+        <NavBar handleNavStateChange={handleNavStateChange} />
       </div>
-      {tokenData?.data && <SpotifyPlayer accessToken={tokenData?.data} />}
+      {tokenData?.data && <SpotifyPlayer accessToken={tokenData.data} />}
     </div>
   );
 };

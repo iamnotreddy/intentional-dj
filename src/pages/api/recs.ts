@@ -6,16 +6,15 @@ import { getAuth } from "@clerk/nextjs/server";
 import { getSpotifyToken } from "~/lib/getSpotifyToken";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-  const { userId } = getAuth(req);
   const { CLERK_SECRET_KEY = "" } = process.env;
-
-  const accessToken = await getSpotifyToken(userId ?? "", CLERK_SECRET_KEY);
-
   const endpointURL = "https://api.spotify.com/v1/recommendations";
 
-  const tracks = req.query.tracks;
+  const { tracks } = req.query;
+  const { userId } = getAuth(req);
 
+  const accessToken = await getSpotifyToken(userId ?? "", CLERK_SECRET_KEY);
   // isolate track uri id
+
   const trackUris =
     typeof tracks === "string" ? tracks.replaceAll("spotify:track:", "") : "";
 

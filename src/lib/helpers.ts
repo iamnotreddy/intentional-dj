@@ -1,6 +1,4 @@
-import { type SpotifyTrack } from "./types";
-
-export const extractIdsFromUriArray = (tracks: SpotifyTrack[]): string => {
+export const extractIdsFromUriArray = (tracks: Spotify.Track[]): string => {
   const ids = tracks.map((track) => {
     const uriParts = track.uri.split(":");
     return uriParts[2];
