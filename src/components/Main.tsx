@@ -1,8 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-misused-promises */
 import { useState } from "react";
 import { SearchWindow } from "./SearchWindow";
 import { type ApiResponse } from "~/lib/types";
@@ -75,7 +70,7 @@ export const MainPage = () => {
 
   const getContainerStyle = (isSearchRendered: boolean) => {
     const opacity = isSearchRendered ? "30" : "70";
-    return `flex w-3/5 flex-col overflow-hidden rounded-2xl border-2 border-black bg-gray-200 bg-opacity-${opacity} p-4 backdrop-filter backdrop-blur`;
+    return `flex w-3/5 flex-col overflow-hidden rounded-2xl border-2 border-[#c9761d] bg-[#c9761d] bg-opacity-${opacity} p-4 backdrop-filter backdrop-blur`;
   };
 
   const containerStyle = getContainerStyle(navState.showSearchWindow);
@@ -87,7 +82,7 @@ export const MainPage = () => {
       </div>
 
       {navState.showSearchWindow && (
-        <div className="fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2 transform border-2 border-purple-300">
+        <div className="fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2 transform border-2 ">
           <SearchWindow
             handleAddSeedTrack={handleAddSeedTrack}
             handleNavStateChange={handleNavStateChange}

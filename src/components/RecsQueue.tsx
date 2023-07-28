@@ -51,7 +51,7 @@ export const RecsQueueRow = (props: { track: Spotify.Track }) => {
   const { track } = props;
   const imageUrl = track.album.images[2]?.url ?? "";
   return (
-    <div className="flex flex-row items-center space-x-4 border-2 border-dashed border-pink-400">
+    <div className="flex flex-row items-center space-x-4">
       <Image src={imageUrl} alt="albumImage" height={75} width={75} />
       <div className="flex flex-col space-y-1">
         <p className="text-xl">{track.name}</p>

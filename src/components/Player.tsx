@@ -81,7 +81,7 @@ export const SpotifyPlayer = (props: { accessToken: string }) => {
   }, [playerState]);
 
   return (
-    <div className="fixed bottom-0 w-full border-t-2 border-black bg-green-200 p-4">
+    <div className="fixed bottom-0 w-full border-t-2 border-black bg-[#c9761d] p-4">
       {playerState && (
         <div className="flex flex-row items-start space-x-4">
           <Image

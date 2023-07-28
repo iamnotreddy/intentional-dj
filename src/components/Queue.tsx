@@ -42,9 +42,9 @@ export const Queue = ({
   }, [recTracks, seedTracks]);
 
   return (
-    <div className="m-4 flex flex-col space-y-2 overflow-y-auto bg-gray-200 bg-opacity-70">
-      <div className="flex justify-between space-x-2 border-2 border-red-200">
-        <p className="text-2xl ">Queue</p>
+    <div className="m-4 flex flex-col space-y-2 overflow-y-auto bg-opacity-70">
+      <div className="flex justify-between space-x-2">
+        <p className="text-2xl">Queue</p>
         <div className="flex flex-row space-x-4">
           <button
             onClick={() => handleNavStateChange("showSearchWindow")}
@@ -73,7 +73,7 @@ export const Queue = ({
           })}
       </div>
 
-      <div className="flex justify-between space-x-2 border-2 border-red-200">
+      <div className="flex justify-between space-x-2 ">
         <p className="text-2xl ">Recs</p>
         <div className="flex flex-row space-x-2"></div>
       </div>
@@ -96,9 +96,15 @@ const QueueRow = (props: {
   const { track, handleRemoveSeedTrack } = props;
   const imageUrl = track.album.images[2]?.url ?? "";
   return (
-    <div className="flex flex-row items-center justify-between space-x-4 border-2 border-dashed border-pink-400">
+    <div className="flex flex-row items-center justify-between space-x-4  rounded-lg border-2 border-[#c9761d] bg-[#d89349] p-2 hover:bg-[#debe9b]">
       <div className="flex flex-row items-center space-x-2">
-        <Image src={imageUrl} alt="albumImage" height={75} width={75} />
+        <Image
+          src={imageUrl}
+          alt="albumImage"
+          height={75}
+          width={75}
+          className="rounded-lg"
+        />
         <div className="flex flex-col space-y-1">
           <p className="text-xl">{track.name}</p>
           <p className="font-bold">{track.artists[0]?.name}</p>
