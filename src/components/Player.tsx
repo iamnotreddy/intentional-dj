@@ -75,63 +75,64 @@ export const SpotifyPlayer = (props: { accessToken: string }) => {
 
   useEffect(() => {
     if (playerState) {
-      console.log("is anything happening");
       setCurrentTrack(playerState.track_window.current_track);
     }
   }, [playerState]);
 
   return (
-    <div className="fixed bottom-0 w-full border-t-2 border-black bg-[#c9761d] p-4">
+    <div className="fixed bottom-0 w-full border-t border-purple-800 bg-[#c9761d] p-4">
       {playerState && (
-        <div className="flex flex-row items-start space-x-4">
+        <div className="flex flex-row items-center space-x-4">
           <Image
+            className="rounded-xl"
             src={currentTrack?.album.images[0]?.url ?? ""}
             alt="nowPlayingImage"
-            height={100}
-            width={100}
+            height={120}
+            width={120}
           />
 
           <div className="flex flex-col">
             <p className="text-2xl">{currentTrack ? currentTrack.name : ""}</p>
-            <p className="text-md">
+            <p className="text-lg">
               {currentTrack
                 ? currentTrack.artists.map((artist) => artist.name).join(" | ")
                 : ""}
             </p>
-            <div className="flex flex-row space-x-2">
+          </div>
+          {/* player icons */}
+          <div className="flex flex-row space-x-2">
+            <button
+              onClick={() => {
+                player.current ? player.current.previousTrack() : undefined;
+              }}
+            >
+              <PreviousIcon />
+            </button>
+            {playerState?.paused ? (
               <button
                 onClick={() => {
-                  player.current ? player.current.previousTrack() : undefined;
+                  player.current ? player.current.togglePlay() : undefined;
                 }}
               >
-                <PreviousIcon />
+                <PlayIcon />
               </button>
-              {playerState?.paused ? (
-                <button
-                  onClick={() => {
-                    player.current ? player.current.togglePlay() : undefined;
-                  }}
-                >
-                  <PlayIcon />
-                </button>
-              ) : (
-                <button
-                  onClick={() => {
-                    player.current ? player.current.togglePlay() : undefined;
-                  }}
-                >
-                  <PauseIcon />
-                </button>
-              )}
+            ) : (
+              <button
+                onClick={() => {
+                  player.current ? player.current.togglePlay() : undefined;
+                }}
+              >
+                <PauseIcon />
+              </button>
+            )}
 
-              <button
-                onClick={() => {
-                  player.current ? player.current.nextTrack() : undefined;
-                }}
-              >
-                <NextIcon />
-              </button>
-            </div>
+            <button
+              onClick={() => {
+                player.current ? player.current.nextTrack() : undefined;
+              }}
+            >
+              <NextIcon />
+            </button>
           </div>
         </div>
       )}

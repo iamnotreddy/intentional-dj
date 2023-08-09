@@ -82,7 +82,7 @@ export const MainPage = () => {
       </div>
 
       {navState.showSearchWindow && (
-        <div className="fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2 transform border-2 ">
+        <div className="fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2 transform">
           <SearchWindow
             handleAddSeedTrack={handleAddSeedTrack}
             handleNavStateChange={handleNavStateChange}

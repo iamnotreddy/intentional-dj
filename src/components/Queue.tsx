@@ -41,50 +41,65 @@ export const Queue = ({
     }
   }, [recTracks, seedTracks]);
 
-  return (
-    <div className="m-4 flex flex-col space-y-2 overflow-y-auto bg-opacity-70">
-      <div className="flex justify-between space-x-2">
-        <p className="text-2xl">Queue</p>
-        <div className="flex flex-row space-x-4">
-          <button
-            onClick={() => handleNavStateChange("showSearchWindow")}
-            className=" hover:text-green-600"
-          >
-            <SearchIcon />
-          </button>
+  if (seedTracks && seedTracks.length > 0) {
+    return (
+      <div className="m-4 flex flex-col space-y-2 overflow-y-auto border-pink-200 bg-opacity-70">
+        <div className="flex justify-between space-x-2">
+          <p className="text-2xl text-white">Queue</p>
+          <div className="flex flex-row space-x-4">
+            <button
+              onClick={() => handleNavStateChange("showSearchWindow")}
+              className=" hover:text-green-600"
+            >
+              <SearchIcon />
+            </button>
+          </div>
+        </div>
+
+        <div className="flex max-h-full flex-col space-y-1">
+          {seedTracks &&
+            seedTracks.map((track) => {
+              return (
+                <QueueRow
+                  key={track.uri}
+                  track={track}
+                  handleRemoveSeedTrack={handleRemoveSeedTrack}
+                />
+              );
+            })}
           <button onClick={() => void fetchRecs()}>
-            <div className="rounded-full border-2 border-black bg-slate-400 p-1 hover:bg-green-700">
-              Generate
+            <div className="w-1/4 rounded-lg border-2   border-[#c9761d] bg-[#d89349] p-2 hover:bg-[#9564a7]">
+              Generate Recs
             </div>
           </button>
         </div>
-      </div>
 
-      <div className="flex max-h-full flex-col space-y-1">
-        {seedTracks &&
-          seedTracks.map((track) => {
-            return (
-              <QueueRow
-                key={track.uri}
-                track={track}
-                handleRemoveSeedTrack={handleRemoveSeedTrack}
-              />
-            );
-          })}
-      </div>
-
-      <div className="flex justify-between space-x-2 ">
-        <p className="text-2xl ">Recs</p>
-        <div className="flex flex-row space-x-2"></div>
-      </div>
-
-      {recTracks && (
-        <div className="flex max-h-full flex-col space-y-1 overflow-y-auto">
-          {recTracks.map((track) => {
-            return <RecsQueueRow key={track.uri} track={track} />;
-          })}
+        <div className="flex justify-between space-x-2 ">
+          <p className="text-2xl text-white">Recs</p>
+          <div className="flex flex-row space-x-2"></div>
         </div>
-      )}
+
+        {recTracks && (
+          <div className="flex max-h-full flex-col space-y-1 overflow-y-auto">
+            {recTracks.map((track) => {
+              return <RecsQueueRow key={track.uri} track={track} />;
+            })}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="m-4 flex flex-col space-y-2 overflow-y-auto bg-opacity-70">
+      <button onClick={() => handleNavStateChange("showSearchWindow")}>
+        <div className="flex flex-row items-center justify-center space-x-4  rounded-lg border-2 border-[#c9761d] bg-[#d89349] p-2 hover:bg-[#debe9b]">
+          <p className=" text-center">Add Tracks</p>
+          <div className="flex flex-row space-x-4">
+            <SearchIcon />
+          </div>
+        </div>
+      </button>
     </div>
   );
 };
