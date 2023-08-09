@@ -1,27 +1,30 @@
 import { useQuery } from "@tanstack/react-query";
-import { SearchIcon } from "./icons";
+import { CloseIcon, SearchIcon } from "./icons";
 import { SearchResult } from "./SearchResult";
 import { type ChangeEvent, useState } from "react";
-import {
-  type SpotifyTrack,
-  type ApiResponse,
-  type SpotifySearchResponse,
-} from "~/lib/types";
+import { type ApiResponse, type SpotifySearchResponse } from "~/lib/types";
+import useDebounceValue from "~/hooks/useDebounceValue";
 
 type SearchWindowProps = {
-  handleAddSeedTrack: (track: SpotifyTrack) => void;
+  handleAddSeedTrack: (track: Spotify.Track) => void;
+  handleNavStateChange: (target: string) => void;
 };
 
-export const SearchWindow = ({ handleAddSeedTrack }: SearchWindowProps) => {
-  //   const debouncedQuery = useDebounceValue(searchInputValue, 100);
+export const SearchWindow = ({
+  handleAddSeedTrack,
+  handleNavStateChange,
+}: SearchWindowProps) => {
   const [searchInputValue, setSearchInputValue] = useState("");
-  const [searchValue, setSearchValue] = useState("");
+  // const [searchValue, setSearchValue] = useState("");
+  const debouncedQuery = useDebounceValue(searchInputValue, 500);
+
   const { data } = useQuery<ApiResponse<SpotifySearchResponse>>(
-    ["searchQuery", searchValue],
-    () => fetch(`/api/search?query=${searchValue}`).then((res) => res.json()),
+    ["searchQuery", debouncedQuery],
+    () =>
+      fetch(`/api/search?query=${debouncedQuery}`).then((res) => res.json()),
     {
       keepPreviousData: true,
-      enabled: searchValue.length > 0,
+      enabled: debouncedQuery.length > 0,
     }
   );
 
@@ -30,14 +33,20 @@ export const SearchWindow = ({ handleAddSeedTrack }: SearchWindowProps) => {
     setSearchInputValue(e.target.value);
   };
 
-  const handleOnClick = () => {
-    setSearchValue(searchInputValue);
-  };
+  // const handleOnClick = () => {
+  //   setSearchValue(searchInputValue);
+  // };
 
   return (
-    <div className="flex flex-col overflow-y-auto rounded-2xl border-2 border-black bg-gray-200 bg-opacity-70 p-4">
-      <p className="pb-2 text-center font-serif text-xl">Pick a song</p>
-      <div className="flex flex-row items-center justify-center space-x-2">
+    <div className="flex max-h-96 flex-col rounded-md border-[#d39a5d] bg-[#d89349] p-4">
+      <div className="sticky top-0 z-10 flex flex-row justify-between">
+        <p className="pb-2 text-center text-xl font-light">Search for a song</p>
+        <button onClick={() => handleNavStateChange("showSearchWindow")}>
+          <CloseIcon />
+        </button>
+      </div>
+
+      <div className="flex flex-row items-center space-x-2 pb-4">
         <input
           type="text"
           placeholder="...find a"
@@ -45,12 +54,11 @@ export const SearchWindow = ({ handleAddSeedTrack }: SearchWindowProps) => {
           value={searchInputValue}
           onChange={handleInputChange}
         />
-        <button onClick={handleOnClick}>
-          <SearchIcon />
-        </button>
+
+        <SearchIcon />
       </div>
 
-      <div className="flex max-h-screen flex-col space-y-1 overflow-y-auto">
+      <div className="flex max-h-full flex-col space-y-1 overflow-y-auto">
         {data &&
           data.data &&
           data.data.items.map((track) => {
